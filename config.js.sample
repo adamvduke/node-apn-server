@@ -1,0 +1,4 @@
+settings = {
+    CERT_FILE: "/path/to/apn_dev_cert.pem", /* Path to the cert to be used, in pem format */
+    KEY_FILE: "/path/to/apns_dev_key_noenc.pem" /* Path to the key to be used, in pem format */
+}
