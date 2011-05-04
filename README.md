@@ -42,7 +42,7 @@ The steps to get all of the source to run are:
 
 The submodules will be their own git repositories in the directory node_modules/
 
-Third party dependencies:
+Credits:
 -----------------
 
 * [node-apn](https://github.com/argon/node-apn) by [Andrew Naylor](https://github.com/argon)
