@@ -1,0 +1,15 @@
+{
+  "name": "node-apn-server",
+  "version": "0.0.1",
+  "engines": {
+    "node": "0.6.x",
+    "npm":  "1.1.x"
+  },
+  "dependencies": {
+    "apn": "1.1.6",
+    "qs": "0.4.2",
+    "express": "2.5.0",
+    "felix-couchdb": "1.0.3",
+    "ejs": "0.7.1"
+  }
+}

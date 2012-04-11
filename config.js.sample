@@ -1,8 +1,0 @@
-var settings = {
-    cert: "/path/to/apn_dev_cert.pem", /* Path to the cert to be used, in pem format */
-    key: "/path/to/apns_dev_key_noenc.pem" /* Path to the key to be used, in pem format */
-    gateway: "gateway.sandbox.push.apple.com",
-    port: 2195,
-    enhanced: true,
-    cacheLength: 5
-};

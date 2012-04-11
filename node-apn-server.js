@@ -1,26 +1,24 @@
 var apns = require('apn'),
-    http = require('http'),
-    qs = require('qs'),
-    util = require('util'),
-    path = require("path"),
-    fs = require('fs');
+express = require('express'),
+fs = require('fs'),
+path = require('path')
+util = require('util'),
+couchdb = require('felix-couchdb');
 
 // a function to be used as a callback in the event that the push notification service has any errors
 var apnErrorCallback = function(errorCode, note) {
     console.log("Push notification error, error code: " + errorCode + " Note: " + util.inspect(note));
 }
 
-// a function used to create a Notification object from application/x-url-encoded data
-// the data should be a string representation of the data needed to create
-// the Notification in application/x-url-encoded form e.g.
-// deviceToken=760ff5e341de1ca9209bcfbd320625b047b44f5b394c191899dd5885a1f65bf2&notificationText=What%3F&badgeNumber=4&sound=default&payload=5+and+7
-var createNotification = function(data) {
-    var params = qs.parse(data);
+// a function used to create a Notification object from a hash of parameters
+var createNotification = function(params) {
     var note = new apns.notification();
     note.device = new apns.device(params.deviceToken);
     note.alert = params.notificationText;
-    if(params.payload){
-	    note.payload = { 'info': params.payload };
+    if (params.payload) {
+        note.payload = {
+            'info': params.payload
+        };
     }
     note.badge = parseInt(params.badgeNumber);
     note.sound = params.sound;
@@ -28,56 +26,72 @@ var createNotification = function(data) {
 }
 
 // The callback to run when the config file has been read in
-var configReadHandler = function(err, data) {
+var configReadHandler = function(result) {
 
-    // eval the contents of the file that was read in
-    // this will set up a hash named settings that contains the
-    // the settings to configure the apns connection
-    eval(data);
-
-    // set the value of the 'errorCallback' to the apnErrorCallback function
-    settings['errorCallback'] = apnErrorCallback;
-
-    // create a Connection to the apn service using the provided settings
-    var apnsConnection = new apns.connection(settings);
-
-    // create the http server
-    http.createServer(function(req, res) {
-
-        var method = req.method;
-
-        // when the requests's data event is emitted
-        // append the incoming data
-        var data = '';
-        req.on('data', function(chunk) {
-            data += chunk;
+    var connections = {};
+    result["rows"].forEach(function(row) {
+        var user = row["doc"];
+        user["applications"].forEach(function(application) {
+            var settings = application["settings"];
+            settings['errorCallback'] = apnErrorCallback;
+            var apnsConnection = new apns.connection(settings);
+            var appId = application["app_id"];
+            connections[appId] = apnsConnection;
         });
+    });
 
-        // when the requests's end event is emitted
-        // handle sending the notification and response
-        req.on('end', function() {
+    // create the express server
+    var app = express.createServer(express.logger());
 
-            // if the request isn't a POST, return a 405
-            if (method != "POST") {
-                res.writeHead(405, { 'Content-Type': 'text/plain' });
-                res.end("Request method: " + method + " not supported.\r\n");
-                return;
-            }
+    app.configure(function() {
+        app.register('html', require('ejs'));
+        app.set('view engine', 'html');
+        app.set('views', __dirname + '/views');
+        app.set('view options', {
+            layout: "layouts/layout.html"
+        })
+        app.use(express.methodOverride());
+        app.use(express.bodyParser());
+        app.use(app.router);
+        app.use(express.static(__dirname + '/public'));
+    });
 
-            // create the notification and send it
-            var note = createNotification(data);
-            apnsConnection.sendNotification(note);
+    // this is the handler for GET requests to '/'
+    app.get('/', function(request, response) {
+        response.render('index');
+    });
 
-            // return a 200 response
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end("Notification sent.\r\n");
-            return;
-        });
-    }).listen(8124, "127.0.0.1");
-    console.log('Server running at http://127.0.0.1:8124/');
+    // this is the handler for POST requests to '/'
+    app.post('/', function(request, response) {
+
+        // TODO: Check the appID and appSecret
+        // redirect if they don't match
+        var appSecret = request.body.appSecret;
+        var appId = request.body.appId;
+
+        // create the notification and send it
+        var note = createNotification(request.body);
+        var connection = connections[appId];
+        connection.sendNotification(note);
+
+        // redirect to '/'
+        response.redirect("/");
+    });
+
+    var port = process.env.PORT || 3000;
+    app.listen(port, function() {
+        console.log("Listening on " + port);
+    });
 }
 
-// load the config file from the sibling file config.js
-// when the load completes run the configReadHandler
-var configfile = path.join(__dirname + '/config.js');
-fs.readFile(configfile, 'utf8', configReadHandler);
+// TODO: figure out how the environment variables
+// work with node on heroku
+var dbPort = process.env.CLOUDANT_PORT || 5984;
+var dbHost = process.env.CLOUDANT_URL || 'localhost';
+var client = couchdb.createClient(dbPort, dbHost);
+var db = client.db('node_apn');
+
+db.allDocs({ include_docs: true }, function(er, result) {
+    if (er) throw new Error(JSON.stringify(er));
+    configReadHandler(result);
+});

@@ -4,18 +4,69 @@ Purpose:
 Just playing around with Node.js mostly. The file node-apn-server.js will run an http server that you can send post requests to and it will send a push
 notification to apple's notification service, provided you've sent the right data in the post body. 
 
-Usage:
+Prerequisites
 -----------------
 
-* Create the set of certificates needed to authenticate your notifications.
-* Copy config.js.sample to config.js and edit it to provide the paths to your certificates.
+* Install [node](http://nodejs.org/)
+* Install [npm](http://npmjs.org/)
+* Install [couchdb](http://couchdb.apache.org/)
+
+Goal Usage:
+-----------------
+
+     node node-apn-server.js
+     curl -d "appId=<your-app-id>&appSecret=<your-app-secret>&deviceToken=760ff5e341de1ca9209bcfbd320625b047b44f5b394c191899dd5885a1f65bf2&notificationText=What%3F&badgeNumber=4&sound=default&payload=5+and+7" http://localhost:3000/
+
+Getting Started:
+-----------------
+
+* Start couchdb
+* Create the pre-requisite data needed to support the server
+ * There is an example document with one application configured shown below
 
 --
 
+     git clone git@github.com:adamvduke/node-apn-server.git
+     cd node-apn-server
+     npm install
      node node-apn-server.js
-     curl -d "deviceToken=760ff5e341de1ca9209bcfbd320625b047b44f5b394c191899dd5885a1f65bf2&notificationText=What%3F&badgeNumber=4&sound=default&payload=5+and+7" http://127.0.0.1:8124
 
-The only required parameter in the POST body is deviceToken.
+Example Document:
+----------------
+
+     {
+      "_id": "0aead832d8a8e5f57e0c10b5ff000565",
+      "_rev": "11-92625b691c7e8203250de95fea65ada2",
+      "username": "adamvduke",
+      "password": "password",
+      "applications": [
+       {
+        "app_id": "1",
+        "app_secret": "1",
+        "settings": {
+                     "certData": "Your Cert Data goes here",
+                     "keyData": "Your Key Data goes here",
+                     "gateway": "gateway.push.apple.com",
+                     "port": 2195,
+                     "enhanced": true,
+                     "cacheLength": 5
+                    }
+       }
+      ]
+     }
+
+Sending Notifications:
+----------------------
+
+There are three required parameters:
+
+* appId
+ * The appId
+* appSecret
+ * The appSecret
+* deviceToken
+ * The device token to send the notification to
+
 Optional parameters are:
 
 * notificationText 
@@ -47,20 +98,6 @@ You will be forced to set a PEM passphrase on the second command, so execute the
     openssl rsa -in apns-prod-key.pem -out apns-prod-key-noenc.pem
 
 See [this blog entry](http://blog.serverdensity.com/2010/06/05/how-to-renew-your-apple-push-notification-push-ssl-certificate/) for more details on setting up the certificates.
-
-Submodules:
------------------
-
-Their are submodules registered for node-apn and node-querystring.
-
-The steps to get all of the source to run are:
-
-     git clone git://github.com/adamvduke/node-apn-server.git
-     cd node-apn-server
-     git submodule init
-     git submodule update
-
-The submodules will be their own git repositories in the directory node_modules/
 
 Credits:
 -----------------
