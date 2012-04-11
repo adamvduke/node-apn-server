@@ -84,11 +84,11 @@ var configReadHandler = function(result) {
     });
 }
 
-// TODO: figure out how the environment variables
-// work with node on heroku
-var dbPort = process.env.CLOUDANT_PORT || 5984;
-var dbHost = process.env.CLOUDANT_URL || 'localhost';
-var client = couchdb.createClient(dbPort, dbHost);
+var dbPort = process.env.COUCH_PORT || 5984;
+var dbHost = process.env.COUCH_HOST || 'localhost';
+var dbUser = process.env.COUCH_USER || null;
+var dbPass = process.env.COUCH_PASS || null;
+var client = couchdb.createClient(dbPort, dbHost, dbUser, dbPass);
 var db = client.db('node_apn');
 
 db.allDocs({ include_docs: true }, function(er, result) {

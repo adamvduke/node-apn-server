@@ -1,6 +1,0 @@
-[submodule "node_modules/qs"]
-	path = node_modules/qs
-	url = https://github.com/visionmedia/node-querystring.git
-[submodule "node_modules/apn"]
-	path = node_modules/apn
-	url = https://github.com/argon/node-apn.git
