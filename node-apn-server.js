@@ -29,13 +29,13 @@ var createNotification = function(params) {
 var configReadHandler = function(result) {
 
     var connections = {};
-    result["rows"].forEach(function(row) {
-        var user = row["doc"];
-        user["applications"].forEach(function(application) {
-            var settings = application["settings"];
-            settings['errorCallback'] = apnErrorCallback;
+    result.rows.forEach(function(row) {
+        var user = row.doc;
+        user.applications.forEach(function(application) {
+            var settings = application.settings;
+            settings.errorCallback = apnErrorCallback;
             var apnsConnection = new apns.connection(settings);
-            var appId = application["app_id"];
+            var appId = application.app_id;
             connections[appId] = apnsConnection;
         });
     });
