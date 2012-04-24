@@ -1,1 +1,1 @@
-web: node node-apn-server.js
+web: node index.js
