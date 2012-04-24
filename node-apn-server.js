@@ -1,5 +1,6 @@
 var apns = require('apn'),
 express = require('express'),
+connect = require('connect'),
 fs = require('fs'),
 path = require('path'),
 util = require('util'),
@@ -55,13 +56,12 @@ var start = function(){
     app.configure(function() {
         app.register('html', require('ejs'));
         app.set('view engine', 'html');
-        app.set('views', __dirname + '/views');
+        app.set('views', __dirname + '/../views');
         app.set('view options', {
             layout: "layouts/layout.html"
         })
+		app.use(connect.bodyParser());
         app.use(express.methodOverride());
-        app.use(express.bodyParser());
-        app.use(app.router);
         app.use(express.static(__dirname + '/public'));
     });
 
