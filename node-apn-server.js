@@ -1,9 +1,16 @@
 var apns = require('apn'),
 express = require('express'),
 fs = require('fs'),
-path = require('path')
+path = require('path'),
 util = require('util'),
 couchdb = require('felix-couchdb');
+
+var dbPort = process.env.COUCH_PORT || 5984;
+var dbHost = process.env.COUCH_HOST || 'localhost';
+var dbUser = process.env.COUCH_USER || null;
+var dbPass = process.env.COUCH_PASS || null;
+var client = couchdb.createClient(dbPort, dbHost, dbUser, dbPass);
+var db = client.db('node_apn');
 
 // a function to be used as a callback in the event that the push notification service has any errors
 var apnErrorCallback = function(errorCode, note) {
@@ -18,18 +25,17 @@ var createNotification = function(params) {
     if (params.payload) {
         note.payload = {
             'info': params.payload
-        };
+        }
     }
-    note.badge = parseInt(params.badgeNumber);
+    note.badge = parseInt(params.badgeNumber, 10);
     note.sound = params.sound;
     return note;
 }
 
-// The callback to run when the config file has been read in
-var configReadHandler = function(result) {
-
-    var connections = {};
-    result.rows.forEach(function(row) {
+var connections = null;
+var createConnections = function(result){
+    connections = {};
+	result.rows.forEach(function(row) {
         var user = row.doc;
         user.applications.forEach(function(application) {
             var settings = application.settings;
@@ -39,6 +45,9 @@ var configReadHandler = function(result) {
             connections[appId] = apnsConnection;
         });
     });
+}
+
+var start = function(){
 
     // create the express server
     var app = express.createServer(express.logger());
@@ -84,14 +93,18 @@ var configReadHandler = function(result) {
     });
 }
 
-var dbPort = process.env.COUCH_PORT || 5984;
-var dbHost = process.env.COUCH_HOST || 'localhost';
-var dbUser = process.env.COUCH_USER || null;
-var dbPass = process.env.COUCH_PASS || null;
-var client = couchdb.createClient(dbPort, dbHost, dbUser, dbPass);
-var db = client.db('node_apn');
+// The callback to run when the config has been read in
+var configReadHandler = function(result) {
+    createConnections(result);
+    start();
+}
 
-db.allDocs({ include_docs: true }, function(er, result) {
-    if (er) throw new Error(JSON.stringify(er));
-    configReadHandler(result);
-});
+var resetConnections = function(db)
+{
+	db.allDocs({ include_docs: true }, function(er, result) {
+	    if (er) throw new Error(JSON.stringify(er));
+	    configReadHandler(result);
+	});
+}
+
+resetConnections(db);
