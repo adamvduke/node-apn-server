@@ -39,6 +39,7 @@ Example Document:
       "_rev": "11-92625b691c7e8203250de95fea65ada2",
       "username": "adamvduke",
       "password": "password",
+      "type": "user"
       "applications": [
        {
         "app_id": "1",
