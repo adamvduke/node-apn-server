@@ -1,8 +1,7 @@
 Purpose:
 -----------------
 
-Just playing around with Node.js mostly. The file node-apn-server.js will run an http server that you can send post requests to and it will send a push
-notification to apple's notification service, provided you've sent the right data in the post body. 
+Provide an http based API that you can send POST requests to and it will send a push notification to apple's notification service.
 
 Prerequisites
 -----------------
@@ -14,22 +13,26 @@ Prerequisites
 Goal Usage:
 -----------------
 
-     node node-apn-server.js
+     node index.js
      curl -d "appId=<your-app-id>&appSecret=<your-app-secret>&deviceToken=760ff5e341de1ca9209bcfbd320625b047b44f5b394c191899dd5885a1f65bf2&notificationText=What%3F&badgeNumber=4&sound=default&payload=5+and+7" http://localhost:3000/
 
 Getting Started:
 -----------------
 
 * Start couchdb
+* Create a node_apn database in couch
 * Create the pre-requisite data needed to support the server
- * There is an example document with one application configured shown below
+ * Add the couch\_views/users\_all.js content as a view called "\_design/users" with the name "all"
+ * Add a user document and configure that user's applications
+ * There is an example document with one user and one application configured shown below
+ * Pay attention to the certData and keyData entries in the settings hash, the server currently provides a way for you to upload the certificate and key, but it's ugly. The plan is to possibly use a different front end to manage the things that might be easier to do in a blocking environment.
 
 --
 
      git clone git@github.com:adamvduke/node-apn-server.git
      cd node-apn-server
      npm install
-     node node-apn-server.js
+     node index.js
 
 Example Document:
 ----------------
@@ -61,23 +64,16 @@ Sending Notifications:
 
 There are three required parameters:
 
-* appId
- * The appId
-* appSecret
- * The appSecret
-* deviceToken
- * The device token to send the notification to
+* appId - Your application's appId
+* appSecret - Your application's appSecret
+* deviceToken - The device token to send the notification to
 
 Optional parameters are:
 
-* notificationText 
- * The text that will display on the device.
-* badgeNumber 
- * The value of the badge to be set on the application's icon.
-* sound 
- * The sound to be played with the notification
-* payload 
- * Extra data to included in the notification, formatted as a json dictionary
+* notificationText - The text that will display on the device.
+* badgeNumber - The value of the badge to be set on the application's icon.
+* sound - The sound to be played with the notification
+* payload - Extra data to included in the notification, formatted as a json dictionary
  * Passed in the options dictionary, with the key: info, during -application:didFinishLaunchingWithOptions: 
 
 Certificates:
