@@ -23,6 +23,7 @@ Getting Started:
 * Create a node_apn database in couch
 * Create the pre-requisite data needed to support the server
  * Add the couch\_views/users\_all.js content as a view called "\_design/users" with the name "all"
+ * Add the couch\_views/applications\_secrets.js content as a view called "\_design/applications" with the name "secrets"
  * Add a user document and configure that user's applications
  * There is an example document with one user and one application configured shown below
  * Pay attention to the certData and keyData entries in the settings hash, the server currently provides a way for you to upload the certificate and key, but it's ugly. The plan is to possibly use a different front end to manage the things that might be easier to do in a blocking environment.
@@ -42,7 +43,7 @@ Example Document:
       "_rev": "11-92625b691c7e8203250de95fea65ada2",
       "username": "adamvduke",
       "password": "password",
-      "type": "user"
+      "type": "user",
       "applications": [
        {
         "app_id": "1",
