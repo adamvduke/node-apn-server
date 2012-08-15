@@ -1,0 +1,13 @@
+form(name="input", action="/upload", method="post", id="input", enctype="multipart/form-data")
+  div.row
+    div.six.columns
+      label App Id:
+      input(type="text", name="appId")
+    div.six.columns
+      label App Secret:
+      input(type="text", name="appSecret")
+    label Certificate:
+    input(type="text", name="certificate")
+    label Key:
+    input(type="text", name="key")
+    input(type="submit", value="Submit")

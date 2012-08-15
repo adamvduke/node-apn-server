@@ -1,0 +1,19 @@
+form(name="input",action="/notify", method="post", id="input", encytype="application/x-www-form-urlencoded")
+  div.row
+    div.six.columns
+      label App Id:
+      input(type="text", name="appId")
+    div.six.columns
+      label App Secret:
+      input(type="text", name="appSecret")
+    label Device Token:
+    input(type="text", name="deviceToken")
+    label Notification Text:
+    input(type="text", name="notificationText")
+    label Badge Number:
+    input(type="text", name="badgeNumber")
+    label Sound:
+    input(type="text", name="sound")
+    label Message Payload:
+    input(type="text", name="payload")
+    input(type="submit", value="Submit")
