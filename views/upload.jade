@@ -7,9 +7,10 @@ form(name="input", action="/upload", method="post", id="input", enctype="multipa
       label App Secret:
       input(type="text", name="appSecret")
     label Certificate:
-    input(type="text", name="certificate")
+    input(type="file", name="certificate")
     label Key:
-    input(type="text", name="key")
+    input(type="file", name="key")
+  div.row
     input(type="submit", value="Submit")
 
 a(href="/") Send a notification!
