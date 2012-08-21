@@ -6,11 +6,12 @@ form(name="input", action="/upload", method="post", id="input", enctype="multipa
     div.six.columns
       label App Secret:
       input(type="text", name="appSecret")
-    label Certificate:
-    input(type="file", name="certificate")
-    label Key:
-    input(type="file", name="key")
-  div.row
-    input(type="submit", value="Submit")
+    div.twelve.columns
+      label Certificate:
+      input(type="file", name="certificate")
+      label Key:
+      input(type="file", name="key")
+    div.twelve.columns
+        input(type="submit", value="Submit")
 
 a(href="/") Send a notification!
