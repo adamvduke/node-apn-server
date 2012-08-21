@@ -13,7 +13,7 @@ Prerequisites
 Goal Usage:
 -----------------
 
-     node index.js
+     node app.js
      curl -d "appId=<your-app-id>&appSecret=<your-app-secret>&deviceToken=760ff5e341de1ca9209bcfbd320625b047b44f5b394c191899dd5885a1f65bf2&notificationText=What%3F&badgeNumber=4&sound=default&payload=5+and+7" http://localhost:3000/
 
 Getting Started:
@@ -33,7 +33,7 @@ Getting Started:
      git clone git@github.com:adamvduke/node-apn-server.git
      cd node-apn-server
      npm install
-     node index.js
+     node app.js
 
 Example Document:
 ----------------
