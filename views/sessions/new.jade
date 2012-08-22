@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+
+  h1 Login
+  form(name="input", action="/sessions", method="post", id="input", enctype="application/x-www-form-urlencoded")
+    div.row
+      div.twelve.columns
+        input(type='hidden', name='redir', value=redir)
+        label Login:
+        input(type='text', name='username', id='username')
+        label(for='password') Password:
+        input(type='password', name='password', id='password')
+        input(type="submit", value="Submit")

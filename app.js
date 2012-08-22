@@ -2,6 +2,7 @@ var express = require('express')
   , routes = require('./routes/index.js')
   , userRoutes = require('./routes/users.js')
   , apiRoutes = require('./routes/api.js')
+  , sessionRoutes = require('./routes/sessions.js')
   , http = require('http')
   , path = require('path');
 
@@ -36,18 +37,34 @@ app.configure('production', function() {
 	app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
+function requiresLogin(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/sessions/new?redir=' + req.url);
+  }
+};
 
-app.get('/users', userRoutes.index);
-app.get('/users/new', userRoutes.new);
-app.post('/users', userRoutes.create);
-app.get('/users/:id', userRoutes.show);
-app.get('/users/:id/edit', userRoutes.edit);
-app.put('/users/:id', userRoutes.update);
+// should be the site root
+app.get('/', requiresLogin, routes.index);
 
+// session resources
+app.get('/sessions/new', sessionRoutes.new);
+app.post('/sessions', sessionRoutes.create);
+app.get('/sessions/destroy', sessionRoutes.destroy);
+
+// user resources
+app.get('/users', requiresLogin, userRoutes.index);
+app.get('/users/new', requiresLogin, userRoutes.new);
+app.post('/users', requiresLogin, userRoutes.create);
+app.get('/users/:id', requiresLogin, userRoutes.show);
+app.get('/users/:id/edit', requiresLogin, userRoutes.edit);
+app.put('/users/:id', requiresLogin, userRoutes.update);
+
+// api "Resources"
+app.get('/api/upload', requiresLogin, apiRoutes.getUpload);
 app.post('/api/notify', apiRoutes.notify);
 app.post('/api/connect', apiRoutes.connect);
-app.get('/api/upload', apiRoutes.getUpload);
 app.post('/api/upload', apiRoutes.postUpload);
 
 http.createServer(app).listen(app.get('port'), function(){
