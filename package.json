@@ -8,8 +8,8 @@
   "dependencies": {
     "apn": "1.1.6",
     "qs": "0.4.2",
-    "express": "2.5.11",
+    "express": "3.0.0rc3",
     "felix-couchdb": "1.0.3",
-    "jade": "0.27.2"
+    "jade": "*"
   }
 }

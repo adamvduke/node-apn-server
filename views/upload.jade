@@ -1,17 +1,21 @@
-form(name="input", action="/upload", method="post", id="input", enctype="multipart/form-data")
-  div.row
-    div.six.columns
-      label App Id:
-      input(type="text", name="appId")
-    div.six.columns
-      label App Secret:
-      input(type="text", name="appSecret")
-    div.twelve.columns
-      label Certificate:
-      input(type="file", name="certificate")
-      label Key:
-      input(type="file", name="key")
-    div.twelve.columns
-        input(type="submit", value="Submit")
+extends layout
 
-a(href="/") Send a notification!
+block content
+
+  form(name="input", action="/api/upload", method="post", id="input", enctype="multipart/form-data")
+    div.row
+      div.six.columns
+        label App Id:
+        input(type="text", name="appId")
+      div.six.columns
+        label App Secret:
+        input(type="text", name="appSecret")
+      div.twelve.columns
+        label Certificate:
+        input(type="file", name="certificate")
+        label Key:
+        input(type="file", name="key")
+      div.twelve.columns
+          input(type="submit", value="Submit")
+
+  a(href="/") Send a notification!

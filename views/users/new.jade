@@ -1,20 +1,24 @@
-form(name="input", action="/users", method="post", id="input", enctype="application/x-www-form-urlencoded")
-  div.row
-    div.six.columns
-      label Full Name:
-      input(type="text", name="fullname")
-  div.row
-    div.six.columns
-      label Username:
-      input(type="text", name="username")
-  div.row
-    div.six.columns
-      label Password:
-      input(type="text", name="password")
-  div.row
-    div.six.columns
-      label Password Confirmation:
-      input(type="text", name="password_confirmation")
-  div.row
-    div.six.columns
-        input(type="submit", value="Submit")
+extends ../layout
+
+block content
+
+  form(name="input", action="/users", method="post", id="input", enctype="application/x-www-form-urlencoded")
+    div.row
+      div.six.columns
+        label Full Name:
+        input(type="text", name="fullname")
+    div.row
+      div.six.columns
+        label Username:
+        input(type="text", name="username")
+    div.row
+      div.six.columns
+        label Password:
+        input(type="text", name="password")
+    div.row
+      div.six.columns
+        label Password Confirmation:
+        input(type="text", name="password_confirmation")
+    div.row
+      div.six.columns
+          input(type="submit", value="Submit")

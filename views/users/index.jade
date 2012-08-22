@@ -1,4 +1,11 @@
-h1 Users:
-#users!= partial('_user', {collection: users})
-p
-  a(href='/users/new') New
+extends ../layout
+
+block content
+
+  h1 Users:
+  each user in users
+    h2= user.username
+    p
+      a(href='/users/' +user._id) Details
+  p
+    a(href='/users/new') New
