@@ -2,4 +2,26 @@ extends ../layout
 
 block content
 
-  h1 Editing #{user.username}
+  h1 Editing #{user.fullname}
+
+  form(name="input", action="/users/" + user._id , method="post", id="input", enctype="application/x-www-form-urlencoded")
+    input(type='hidden', name='_method', value='PUT')
+    div.row
+      div.six.columns
+        label Full Name:
+        input(type="text", name="fullname", value=user.fullname)
+    div.row
+      div.six.columns
+        label Username:
+        input(type="text", name="username", value=user.username)
+    div.row
+      div.six.columns
+        label Password:
+        input(type="text", name="password")
+    div.row
+      div.six.columns
+        label Password Confirmation:
+        input(type="text", name="password_confirmation")
+    div.row
+      div.six.columns
+          input(type="submit", value="Submit")
