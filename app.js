@@ -8,6 +8,16 @@ var express = require('express')
 
 var app = express();
 
+var setLoggedIn = function(request, response, next){
+	if(request.session == null || request.session.user == null){
+		response.locals.loggedIn = false;
+	}
+	else{
+		response.locals.loggedIn = true;
+	}
+	next();
+};
+
 // global configure options
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -19,6 +29,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser('your secret here'));
   app.use(express.session());
+  app.use(setLoggedIn);
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -51,7 +62,7 @@ app.get('/', requiresLogin, routes.index);
 // session resources
 app.get('/sessions/new', sessionRoutes.new);
 app.post('/sessions', sessionRoutes.create);
-app.get('/sessions/destroy', sessionRoutes.destroy);
+app.get('/sessions/destroy', requiresLogin, sessionRoutes.destroy);
 
 // user resources
 app.get('/users', requiresLogin, userRoutes.index);

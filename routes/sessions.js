@@ -1,6 +1,7 @@
 
 exports.new = function(req, res) {
-  res.render('sessions/new', { redir: req.query.redir });
+	delete req.session.user;
+	res.render('sessions/new', { redir: req.query.redir });
 };
 
 exports.create = function(req, res) {
