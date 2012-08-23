@@ -75,9 +75,10 @@ app.put('/users/:id', requiresLogin, userRoutes.update);
 
 // api "Resources"
 app.get('/api/upload', requiresLogin, apiRoutes.getUpload);
-app.post('/api/notify', apiRoutes.notify);
-app.post('/api/connect', apiRoutes.connect);
 app.post('/api/upload', apiRoutes.postUpload);
+app.get('/api/notify', apiRoutes.getNotify)
+app.post('/api/notify', apiRoutes.postNotify);
+app.post('/api/connect', apiRoutes.connect);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

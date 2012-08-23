@@ -4,11 +4,15 @@ var apnHelpers = require('../lib/apnHelpers.js'),
 	fs = require('fs'),
 	handlers = require('../lib/handlers.js');
 
+exports.getNotify = function(request, response) {
+	response.render('api/notify');
+};
+
 // this sets up a handler for POST requests to '/notify'
 // it finds the correct connection by appId,
 // builds a "note" and pushes it down the pipe
 // to apple
-exports.notify = function(request, response) {
+exports.postNotify = function(request, response) {
 
 	var appId = request.body.appId;
 	db.view("applications", "secrets", {
@@ -64,7 +68,7 @@ exports.connect = function(request, response) {
 // this sets up a handler for GET requests to '/upload'
 // it renders a page with a form to upload your certificates
 exports.getUpload = function(request, response) {
-	response.render('upload');
+	response.render('api/upload');
 };
 
 // this sets up a handler for POST requests to '/upload'
