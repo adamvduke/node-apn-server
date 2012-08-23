@@ -7,6 +7,7 @@ var express = require('express')
   , path = require('path');
 
 var app = express();
+process.setMaxListeners(0);
 
 var setLoggedIn = function(request, response, next){
 	if(request.session == null || request.session.user == null){
