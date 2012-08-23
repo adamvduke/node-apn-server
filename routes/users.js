@@ -34,5 +34,5 @@ exports.edit = function(request, response) {
 exports.update = function(request, response) {
   var id = request.params.id;
   //TODO: update the existing user in the database
-  res.redirect('/users/' + id);
+  response.redirect('/users/' + id);
 };

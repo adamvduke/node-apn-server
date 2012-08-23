@@ -1,10 +1,10 @@
 
-exports.new = function(req, res) {
-	delete req.session.user;
-	res.render('sessions/new', { redir: req.query.redir });
+exports.new = function(request, response) {
+	delete request.session.user;
+	response.render('sessions/new', { redir: request.query.redir });
 };
 
-exports.create = function(req, res) {
+exports.create = function(request, response) {
 	
 	// FIXME: authenticate the user
 	// if successful login
@@ -13,16 +13,16 @@ exports.create = function(req, res) {
 	// if failed login
 	// request.flash('warn', 'Login Failed')
 	// response.render('sessions/new', { redir: req.body.redir })
-	var valid = (req.body.username === "adamvduke") && (req.body.password === "password");
+	var valid = (request.body.username === "adamvduke") && (request.body.password === "password");
 	if (valid) {
-      req.session.user = valid;
-      res.redirect(req.body.redir || '/');
+      request.session.user = valid;
+      response.redirect(request.body.redir || '/');
     } else {
-      res.render('sessions/new', { redir: req.body.redir });
+      response.render('sessions/new', { redir: request.body.redir });
     }
 };
 
-exports.destroy = function(req, res) {
-  delete req.session.user;
-  res.redirect('/sessions/new');
+exports.destroy = function(request, response) {
+  delete request.session.user;
+  response.redirect('/sessions/new');
 };
