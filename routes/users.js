@@ -15,8 +15,16 @@ exports.new = function(request, response) {
 };
 
 exports.create = function(request, response) {
-	//TODO: save the form data as a user to the database
-	response.render('users/new');
+	var doc = {
+		fullname: request.body.fullname,
+		username: request.body.username,
+		password: request.body.password,
+		type: "user",
+		applications: []
+	};
+	db.saveDoc(doc, function(error, result){
+		response.redirect('users/' + result.id);
+	});
 };
 
 exports.show = function(request, response) {
