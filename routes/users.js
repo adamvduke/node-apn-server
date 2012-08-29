@@ -41,6 +41,12 @@ exports.edit = function(request, response) {
 
 exports.update = function(request, response) {
   var id = request.params.id;
-  //TODO: update the existing user in the database
-  response.redirect('/users/' + id);
+  db.getDoc(id, function(er, result){
+	result.fullname = request.body.fullname;
+	result.username = request.body.username;
+	result.password = request.body.password;
+	db.saveDoc(result._id, result, function(err, result){
+		  response.redirect('/users/' + id);
+	});
+  });
 };
