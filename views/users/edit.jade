@@ -2,10 +2,11 @@ extends ../layout
 
 block content
 
-  h1 Editing #{user.fullname}
+  h1 Editing: #{user.fullname}
 
   form(name="input", action="/users/" + user._id , method="post", id="input", enctype="application/x-www-form-urlencoded")
     input(type='hidden', name='_method', value='PUT')
+    input(type='hidden', name='id', value=user._id)
     div.row
       div.six.columns
         label Full Name:
