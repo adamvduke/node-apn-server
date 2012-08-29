@@ -9,6 +9,8 @@ var express = require('express')
 var app = express();
 process.setMaxListeners(0);
 
+// middleware to add "loggedIn" to the available variables
+// when rendering views
 var setLoggedIn = function(request, response, next){
 	if(request.session == null || request.session.user == null){
 		response.locals.loggedIn = false;
@@ -17,6 +19,15 @@ var setLoggedIn = function(request, response, next){
 		response.locals.loggedIn = true;
 	}
 	next();
+};
+
+// middleware to force a login for requests that require a session
+function requiresLogin(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/sessions/new?redir=' + req.url);
+  }
 };
 
 // global configure options
@@ -49,15 +60,7 @@ app.configure('production', function() {
 	app.use(express.errorHandler());
 });
 
-function requiresLogin(req, res, next) {
-  if (req.session.user) {
-    next();
-  } else {
-    res.redirect('/sessions/new?redir=' + req.url);
-  }
-};
-
-// should be the site root
+// the site root
 app.get('/', requiresLogin, routes.index);
 
 // session resources
@@ -73,7 +76,7 @@ app.get('/users/:id', requiresLogin, userRoutes.show);
 app.get('/users/:id/edit', requiresLogin, userRoutes.edit);
 app.put('/users/:id', requiresLogin, userRoutes.update);
 
-// api "Resources"
+// api "Resources"... yes, I know, they aren't really resources...
 app.get('/api/upload', requiresLogin, apiRoutes.getUpload);
 app.post('/api/upload', apiRoutes.postUpload);
 app.get('/api/notify', apiRoutes.getNotify)
