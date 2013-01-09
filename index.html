@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Node-apn-server by adamvduke</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Node-apn-server</h1>
+        <h2>An http server written in Node.js to send apple push notifications</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/adamvduke/node-apn-server/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/adamvduke/node-apn-server/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/adamvduke/node-apn-server" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h2>Purpose:</h2>
+
+<p>Provide an http based API that you can send POST requests to and it will send a push notification to apple's notification service.</p>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li>Install <a href="http://nodejs.org/">node</a>
+</li>
+<li>Install <a href="http://npmjs.org/">npm</a>
+</li>
+<li>Install <a href="http://couchdb.apache.org/">couchdb</a>
+</li>
+</ul><h2>Goal Usage:</h2>
+
+<pre><code> node app.js
+ curl -d "appId=&lt;your-app-id&gt;&amp;appSecret=&lt;your-app-secret&gt;&amp;deviceToken=760ff5e341de1ca9209bcfbd320625b047b44f5b394c191899dd5885a1f65bf2&amp;notificationText=What%3F&amp;badgeNumber=4&amp;sound=default&amp;payload=5+and+7" http://localhost:3000/
+</code></pre>
+
+<h2>Getting Started:</h2>
+
+<ul>
+<li>Start couchdb</li>
+<li>Create a node_apn database in couch</li>
+<li>Create the pre-requisite data needed to support the server
+
+<ul>
+<li>Add the couch_views/users_all.js content as a view called "_design/users" with the name "all"</li>
+<li>Add the couch_views/applications_secrets.js content as a view called "_design/applications" with the name "secrets"</li>
+<li>Add a user document and configure that user's applications</li>
+<li>There is an example document with one user and one application configured shown below</li>
+<li>Pay attention to the certData and keyData entries in the settings hash, the server currently provides a way for you to upload the certificate and key, but it's ugly. The plan is to possibly use a different front end to manage the things that might be easier to do in a blocking environment.</li>
+</ul>
+</li>
+</ul><h2></h2>
+
+<pre><code> git clone git@github.com:adamvduke/node-apn-server.git
+ cd node-apn-server
+ npm install
+ node app.js
+</code></pre>
+
+<h2>Example Document:</h2>
+
+<pre><code> {
+  "_id": "0aead832d8a8e5f57e0c10b5ff000565",
+  "_rev": "11-92625b691c7e8203250de95fea65ada2",
+  "username": "adamvduke",
+  "password": "password",
+  "type": "user",
+  "applications": [
+   {
+    "app_id": "1",
+    "app_secret": "1",
+    "settings": {
+                 "certData": "Your Cert Data goes here",
+                 "keyData": "Your Key Data goes here",
+                 "gateway": "gateway.push.apple.com",
+                 "port": 2195,
+                 "enhanced": true,
+                 "cacheLength": 5
+                }
+   }
+  ]
+ }
+</code></pre>
+
+<h2>Sending Notifications:</h2>
+
+<p>There are three required parameters:</p>
+
+<ul>
+<li>appId - Your application's appId</li>
+<li>appSecret - Your application's appSecret</li>
+<li>deviceToken - The device token to send the notification to</li>
+</ul><p>Optional parameters are:</p>
+
+<ul>
+<li>notificationText - The text that will display on the device.</li>
+<li>badgeNumber - The value of the badge to be set on the application's icon.</li>
+<li>sound - The sound to be played with the notification</li>
+<li>payload - Extra data to included in the notification, formatted as a json dictionary
+
+<ul>
+<li>Passed in the options dictionary, with the key: info, during -application:didFinishLaunchingWithOptions: </li>
+</ul>
+</li>
+</ul><h2>Certificates:</h2>
+
+<ul>
+<li>Do the dance to get the production push notification certificate from the iOS provisioning portal</li>
+<li>Download and install the certificate into Keychain Access.app</li>
+<li>Export the certificate and private key separately as apns-prod-cert.p12 and apns-prod-key.p12 respectively</li>
+<li>For both exports, you will be asked to specify a password, then asked for your keychain password. Do not specify a password on the first prompt.</li>
+<li>Run the following commands to convert the certificate and private key to .pem format</li>
+</ul><h2></h2>
+
+<pre><code>openssl pkcs12 -clcerts -nokeys -out apns-prod-cert.pem -in apns-prod-cert.p12
+openssl pkcs12 -nocerts -out apns-prod-key.pem -in apns-prod-key.p12
+</code></pre>
+
+<p>You will be forced to set a PEM passphrase on the second command, so execute the following command to remove it:</p>
+
+<pre><code>openssl rsa -in apns-prod-key.pem -out apns-prod-key-noenc.pem
+</code></pre>
+
+<p>See <a href="http://blog.serverdensity.com/2010/06/05/how-to-renew-your-apple-push-notification-push-ssl-certificate/">this blog entry</a> for more details on setting up the certificates.</p>
+
+<h2>Credits:</h2>
+
+<ul>
+<li>
+<a href="https://github.com/argon/node-apn">node-apn</a> by <a href="https://github.com/argon">Andrew Naylor</a>
+</li>
+<li>
+<a href="https://github.com/visionmedia/node-querystring">node-querystring</a> by <a href="https://github.com/visionmedia/">visionmedia</a>
+</li>
+<li>
+<a href="http://blog.serverdensity.com/2010/06/05/how-to-renew-your-apple-push-notification-push-ssl-certificate/">How to renew your Apple Push Notification Push SSL Certificate</a> by <a href="http://blog.serverdensity.com/author/dmytton/">David Mytton</a> </li>
+</ul>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
