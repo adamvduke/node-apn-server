@@ -1,6 +1,8 @@
 extends ../layout
 
 block content
+  div.flash
+    = message
 
   h1 New User
 
@@ -11,16 +13,16 @@ block content
         input(type="text", name="fullname")
     div.row
       div.six.columns
-        label Username:
-        input(type="text", name="username")
+        label Email:
+        input(type="text", name="email")
     div.row
       div.six.columns
         label Password:
-        input(type="text", name="password")
+        input(type="password", name="password")
     div.row
       div.six.columns
         label Password Confirmation:
-        input(type="text", name="password_confirmation")
+        input(type="password", name="password_confirmation")
     div.row
       div.six.columns
           input(type="submit", value="Submit")

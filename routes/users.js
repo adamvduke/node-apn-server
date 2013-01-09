@@ -1,4 +1,6 @@
 var db = require('../lib/db.js').db();
+var bcrypt = require('bcrypt');
+var util = require('util');
 
 exports.index = function(request, response) {
 	db.view("users", "all", {include_docs: true}, function(error, result){
@@ -11,19 +13,30 @@ exports.index = function(request, response) {
 };
 
 exports.new = function(request, response) {
-	response.render('users/new');
+	response.render('users/new', {message: request.flash('warn')});
 };
 
 exports.create = function(request, response) {
-	var doc = {
-		fullname: request.body.fullname,
-		username: request.body.username,
-		password: request.body.password,
-		type: "user",
-		applications: []
-	};
-	db.saveDoc(doc, function(error, result){
-		response.redirect('users/' + result.id);
+	bcrypt.genSalt(10, function(err, salt) {
+	    bcrypt.hash(request.body.password, salt, function(err, hash) {
+	        var doc = {
+		        _id: request.body.email,
+				fullname: request.body.fullname,
+				email: request.body.email,
+				password: hash,
+				type: "user",
+				applications: []
+			};
+			db.saveDoc(doc, function(error, result){
+				if(error && error.error === 'conflict')
+				{
+					request.flash('warn', 'There is already an account associated with that email address');
+					response.redirect('users/new');
+					return;
+				}
+				response.redirect('users/' + result.id);
+			});
+	    });
 	});
 };
 

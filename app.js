@@ -4,7 +4,8 @@ var express = require('express')
   , apiRoutes = require('./routes/api.js')
   , sessionRoutes = require('./routes/sessions.js')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , flash = require('connect-flash');
 
 var app = express();
 process.setMaxListeners(0);
@@ -22,11 +23,11 @@ var setLoggedIn = function(request, response, next){
 };
 
 // middleware to force a login for requests that require a session
-function requiresLogin(req, res, next) {
-  if (req.session.user) {
+function requiresLogin(request, response, next) {
+  if (request.session.user) {
     next();
   } else {
-    res.redirect('/sessions/new?redir=' + req.url);
+    response.redirect('/sessions/new?redir=' + request.url);
   }
 };
 
@@ -40,8 +41,9 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser('your secret here'));
-  app.use(express.session());
+  app.use(express.session({ cookie: { maxAge: 60000 }}));
   app.use(setLoggedIn);
+  app.use(flash());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
