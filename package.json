@@ -13,5 +13,9 @@
     "jade": "*",
     "bcrypt": "0.7.2",
     "connect-flash": "*"
+  },
+  "devDependencies":{
+    "restler": "2.0.1",
+    "nodeunit": "0.7.4"
   }
 }
